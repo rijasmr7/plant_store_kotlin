@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Plant store</string>
+    <string name="search_label">Search plants</string>
+    <string name="wishlist">Have a specific plant in mind that you can’t find in our collection? \nTell us about it and we’ll do our best to source it for you. \nSimply fill out the form below with the details of the plant you want,  \nand we’ll notify you once it\'s available. We appreciate your suggestions \nand strive to meet your needs.</string>
+    <string name="app1">Get personalized recommendations from our plant experts! Whether you\'re a beginner or an experienced plant parent, our experts can help you choose the right plants, give care tips, and answer any questions you may have.</string>
+    <string name="app2">🌿 Personalized plant recommendations\n🌱 Plant care guidance\n🪴 Space planning and design tips\n📋 Help with troubleshooting plant issues</string>
+    <string name="app3">🌟 Expert consultation from certified plant specialists\n🎯 Tailored advice for your space and needs\n👍 Hassle-free and convenient appointments\n💬 Ongoing support even after the appointment</string>
+    <string name="app4">\"The consultation helped me choose the perfect plants for my home! Highly recommend their service!\" – Sarah L.\n\n\"I was struggling with plant care, but the expert advice I received made all the difference!\" – John M.</string>
+    <string name="text1">We\'d love to hear from you!</string>
+    <string name="text2">Feel free to send us your recommendations, feedback, or inquiries. We value your opinion and will get back to you as soon as possible.</string>
+    <string name="text3">You can also reach us at support@haalaflowergarden.com</string>
+</resources>

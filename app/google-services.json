@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "414236325680",
+    "project_id": "plant-shop---kotlin",
+    "storage_bucket": "plant-shop---kotlin.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:414236325680:android:6f9e9092d54073f06efaf5",
+        "android_client_info": {
+          "package_name": "com.example.plantstore"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_rSw1GdyZAQOlsDz9xjDUA6ovb8pexnk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
