@@ -81,7 +81,8 @@ fun TextUsScreen(navController: NavHostController) {
 
             Text(
                 text = stringResource(R.string.text2),
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(horizontal = 8.dp)
             )
@@ -159,7 +160,7 @@ fun TextUsScreen(navController: NavHostController) {
             Text(
                 text = stringResource(R.string.text3),
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Gray,
+                color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center
             )
         }

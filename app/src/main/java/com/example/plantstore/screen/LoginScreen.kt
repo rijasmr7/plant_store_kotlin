@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -52,7 +53,8 @@ fun LoginScreen(
                 modifier = Modifier
                     .fillMaxWidth(0.9f)
                     .wrapContentHeight()
-                    .background(Color(0xFFDFFFD6), shape = RoundedCornerShape(16.dp))
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(MaterialTheme.colorScheme.surface)
                     .padding(24.dp),
                 contentAlignment = Alignment.Center
             ) {
@@ -72,7 +74,7 @@ fun LoginScreen(
                     Text(
                         text = "Sign in to continue",
                         fontSize = 18.sp,
-                        color = Color.DarkGray
+                        color = MaterialTheme.colorScheme.onSurface
                     )
 
                     Spacer(modifier = Modifier.height(32.dp))
@@ -123,7 +125,7 @@ fun LoginScreen(
 
                     Text(
                         text = "Not registered? Sign up",
-                        color = MaterialTheme.colorScheme.primary,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 16.sp,
                         modifier = Modifier.clickable(onClick = onNavigateToRegister)
                     )

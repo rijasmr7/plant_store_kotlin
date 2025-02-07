@@ -74,7 +74,7 @@ fun WishlistScreen(navController: NavHostController) {
                 text = stringResource(R.string.wishlist),
                 style = TextStyle(
                     fontSize = 16.sp,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.onSurface
                 ),
                 modifier = Modifier.padding(horizontal = 16.dp)
             )

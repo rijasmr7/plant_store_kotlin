@@ -106,6 +106,7 @@ fun OrderScreen(navController: NavHostController, plantId: Int) {
                 Text(
                     text = plantDetail.name,
                     fontSize = 24.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Bold
                 )
 
@@ -132,7 +133,7 @@ fun OrderScreen(navController: NavHostController, plantId: Int) {
                         Text(text = "-")
                     }
 
-                    Text(text = "$quantity", fontSize = 20.sp)
+                    Text(text = "$quantity", fontSize = 20.sp, color = MaterialTheme.colorScheme.onSurface,)
 
                     Button(
                         onClick = { quantity++ }
@@ -146,6 +147,7 @@ fun OrderScreen(navController: NavHostController, plantId: Int) {
                 Text(
                     text = "Total: Rs.${String.format("%.2f", totalAmount)}",
                     fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Bold
                 )
 

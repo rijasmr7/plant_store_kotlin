@@ -103,6 +103,7 @@ fun PlantDetailScreen(navController: NavHostController, plantId: Int) {
                 Text(
                     text = plantDetail.name,
                     fontSize = 24.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
                 )
@@ -120,12 +121,14 @@ fun PlantDetailScreen(navController: NavHostController, plantId: Int) {
                 Text(
                     text = "In stock: ${plantDetail.inStock} units",
                     fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(8.dp)
                 )
 
                 Text(
                     text = "This is a great plant for indoor gardening. Easy to care for.",
                     fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(8.dp)
                 )
 

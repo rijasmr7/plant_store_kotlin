@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -26,7 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun RegisterScreen(
-    navController: NavController,  // Accept navController as a parameter
+    navController: NavController,
     onRegisterSuccess: () -> Unit
 ) {
     var name by remember { mutableStateOf("") }
@@ -52,16 +53,14 @@ fun RegisterScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth(0.9f) // Set a max width for better form appearance
+                    .fillMaxWidth(0.9f)
                     .wrapContentHeight()
-                    .background(
-                        Color(0xFFDFFFD6),
-                        shape = RoundedCornerShape(16.dp)
-                    ) // Light green background
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(MaterialTheme.colorScheme.surface)
                     .padding(24.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -78,7 +77,7 @@ fun RegisterScreen(
                 Text(
                     text = "Join the Haala Flower Garden",
                     fontSize = 18.sp,
-                    color = Color.DarkGray
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -144,7 +143,7 @@ fun RegisterScreen(
                                         if (task.isSuccessful) {
                                             val user = auth.currentUser
                                             if (user != null) {
-                                                // Save user data to Firestore
+                                                //Saving user data to firestore
                                                 val userRef =
                                                     db.collection("users").document(user.uid)
                                                 val userData = hashMapOf(
@@ -204,7 +203,7 @@ fun RegisterScreen(
 
                 Text(
                     text = "Already have an account? Sign in",
-                    color = MaterialTheme.colorScheme.primary,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 16.sp,
                     modifier = Modifier.clickable {
                         navController.navigate("loginScreen")

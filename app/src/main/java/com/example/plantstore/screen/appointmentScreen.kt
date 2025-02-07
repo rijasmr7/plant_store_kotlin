@@ -76,7 +76,7 @@ fun AppointmentScreen(navController: NavHostController) {
             Text(
                 text = stringResource(R.string.app1),
                 fontSize = 16.sp,
-                color = Color.Gray,
+                color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(16.dp)
             )
@@ -94,6 +94,7 @@ fun AppointmentScreen(navController: NavHostController) {
             Text(
                 text = stringResource(R.string.app2),
                 fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Start,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -111,6 +112,7 @@ fun AppointmentScreen(navController: NavHostController) {
             Text(
                 text = stringResource(R.string.app3),
                 fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Start,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -128,6 +130,7 @@ fun AppointmentScreen(navController: NavHostController) {
             Text(
                 text = stringResource(R.string.app4),
                 fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Start,
                 modifier = Modifier.fillMaxWidth()
             )

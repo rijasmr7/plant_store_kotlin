@@ -310,7 +310,7 @@ fun ProductCardSearch(product: AllProducts) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
-                Text(text = product.name, fontSize = 20.sp)
+                Text(text = product.name, fontSize = 20.sp, color = MaterialTheme.colorScheme.onSurface,)
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = "Rs. ${product.price}", fontSize = 16.sp)
             }
@@ -413,7 +413,7 @@ fun ProductCard(product: Any) {
             }
 
             Column {
-                Text(text = name, fontSize = 20.sp)
+                Text(text = name, fontSize = 20.sp,color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(text = "Rs. $price", fontSize = 20.sp)
             }
