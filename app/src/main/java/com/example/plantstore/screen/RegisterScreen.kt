@@ -22,6 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.plantstore.R
+import com.example.plantstore.geolocationSensorUtils.RequestLocationPermission
+import com.example.plantstore.geolocationSensorUtils.getUserLocation
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -35,10 +37,22 @@ fun RegisterScreen(
     var city by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    var locationFetched by remember { mutableStateOf(false) }
+
 
     val context = LocalContext.current
     val auth = FirebaseAuth.getInstance()
     val db = FirebaseFirestore.getInstance()
+
+    //GeoLocation sensor requesting permission
+    RequestLocationPermission {
+        if (!locationFetched) {
+            getUserLocation(context) { fetchedCity ->
+                city = fetchedCity
+                locationFetched = true
+            }
+        }
+    }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -107,7 +121,8 @@ fun RegisterScreen(
                     onValueChange = { city = it },
                     label = { Text("City") },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    readOnly = true
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
