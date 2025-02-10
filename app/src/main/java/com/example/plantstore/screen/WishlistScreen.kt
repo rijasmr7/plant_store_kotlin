@@ -54,6 +54,15 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.compose.foundation.background
 import android.content.pm.PackageManager
 import com.example.plantstore.components.CommonFooter
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.clickable
 
 @Composable
 fun WishlistScreen(navController: NavHostController) {
@@ -241,168 +250,211 @@ fun WishlistScreen(navController: NavHostController) {
         }
     }
 
-    Scaffold(
-        topBar = { Header(onProfileClick = { navController.navigate("startScreen") },
-            onLogoClick = { navController.navigate("homeScreen") }) },
-        bottomBar = {
-            Column {
-                CommonFooter()
-                CustomBottomNavigationBar(selectedTab) { selectedTab = it }
-            }
-        },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Your Plant Wishlist",
-                style = TextStyle(
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF4CAF50)
-                ),
-                modifier = Modifier.padding(16.dp)
-            )
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
-            Text(
-                text = stringResource(R.string.wishlist),
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.onSurface
-                ),
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Column(modifier = Modifier.padding(16.dp)) {
-                TextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    label = { Text("Name") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                TextField(
-                    value = phone,
-                    onValueChange = { phone = it },
-                    label = { Text("Phone") },
-                    modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                    singleLine = true
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                TextField(
-                    value = plantName,
-                    onValueChange = { plantName = it },
-                    label = { Text("Plant Name") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                TextField(
-                    value = plantSpecs,
-                    onValueChange = { plantSpecs = it },
-                    label = { Text("Plant Specifications (optional)") },
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet {
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(150.dp),
-                    maxLines = 5
-                )
-
-                Spacer(modifier = Modifier.height(30.dp))
-
-                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    Button(onClick = { checkAndRequestPermissions(false) }) {
-                        Text("Upload Image")
-                    }
-                    Button(onClick = { checkAndRequestPermissions(true) }) {
-                        Text("Take Photo")
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(30.dp))
-
-                photoUri?.let { uri ->
-                    Image(
-                        painter = rememberAsyncImagePainter(uri),
-                        contentDescription = "Selected Image",
-                        modifier = Modifier
-                            .size(150.dp)
-                            .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(30.dp))
-
-                Button(
-                    onClick = {
-                        coroutineScope.launch {
-                            if (name.isNotEmpty() && phone.isNotEmpty() && plantName.isNotEmpty()) {
-                                snackbarHostState.showSnackbar("Your wishlist is now under consideration")
-                            } else {
-                                snackbarHostState.showSnackbar("Please fill in all the fields.")
-                            }
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = Color.White
-                    )
+                        .padding(16.dp)
                 ) {
                     Text(
-                        text = "Submit",
-                        fontWeight = FontWeight.Bold
+                        text = "Plant Store",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(16.dp)
                     )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                scope.launch {
+                                    drawerState.close()
+                                    navController.navigate("plantGuides")
+                                }
+                            }
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = "Plant Care Guides",
+                            fontSize = 18.sp
+                        )
+                    }
                 }
             }
         }
+    ) {
+        Scaffold(
+            topBar = {
+                Header(
+                    onLogoClick = { navController.navigate("homeScreen") },
+                    onMenuClick = { scope.launch { drawerState.open() } }
+                )
+            },
+            bottomBar = {
+                Column {
+                    CommonFooter()
+                    CustomBottomNavigationBar(selectedTab) { selectedTab = it }
+                }
+            },
+        ) { padding ->
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+                    .verticalScroll(rememberScrollState())
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Your Plant Wishlist",
+                    style = TextStyle(
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF4CAF50)
+                    ),
+                    modifier = Modifier.padding(16.dp)
+                )
 
-        when (selectedTab) {
-            BottomNavItem.Home -> {
-                navController.navigate("homeScreen") {
-                    popUpTo(navController.graph.startDestinationId) { saveState = true }
-                    launchSingleTop = true
-                    restoreState = true
+                Text(
+                    text = stringResource(R.string.wishlist),
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Column(modifier = Modifier.padding(16.dp)) {
+                    TextField(
+                        value = name,
+                        onValueChange = { name = it },
+                        label = { Text("Name") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    TextField(
+                        value = phone,
+                        onValueChange = { phone = it },
+                        label = { Text("Phone") },
+                        modifier = Modifier.fillMaxWidth(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                        singleLine = true
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    TextField(
+                        value = plantName,
+                        onValueChange = { plantName = it },
+                        label = { Text("Plant Name") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    TextField(
+                        value = plantSpecs,
+                        onValueChange = { plantSpecs = it },
+                        label = { Text("Plant Specifications (optional)") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(150.dp),
+                        maxLines = 5
+                    )
+
+                    Spacer(modifier = Modifier.height(30.dp))
+
+                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                        Button(onClick = { checkAndRequestPermissions(false) }) {
+                            Text("Upload Image")
+                        }
+                        Button(onClick = { checkAndRequestPermissions(true) }) {
+                            Text("Take Photo")
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(30.dp))
+
+                    photoUri?.let { uri ->
+                        Image(
+                            painter = rememberAsyncImagePainter(uri),
+                            contentDescription = "Selected Image",
+                            modifier = Modifier
+                                .size(150.dp)
+                                .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(30.dp))
+
+                    Button(
+                        onClick = {
+                            coroutineScope.launch {
+                                if (name.isNotEmpty() && phone.isNotEmpty() && plantName.isNotEmpty()) {
+                                    snackbarHostState.showSnackbar("Your wishlist is now under consideration")
+                                } else {
+                                    snackbarHostState.showSnackbar("Please fill in all the fields.")
+                                }
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(
+                            text = "Submit",
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
             }
 
-            BottomNavItem.Wishlist -> {}
-
-            BottomNavItem.Plants -> {
-                navController.navigate("plantScreen") {
-                    popUpTo(navController.graph.startDestinationId) { saveState = true }
-                    launchSingleTop = true
-                    restoreState = true
+            when (selectedTab) {
+                BottomNavItem.Home -> {
+                    navController.navigate("homeScreen") {
+                        popUpTo(navController.graph.startDestinationId) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 }
-            }
 
-            BottomNavItem.Appointment -> {
-                navController.navigate("appointmentScreen") {
-                    popUpTo(navController.graph.startDestinationId) { saveState = true }
-                    launchSingleTop = true
-                    restoreState = true
+                BottomNavItem.Wishlist -> {}
+
+                BottomNavItem.Plants -> {
+                    navController.navigate("plantScreen") {
+                        popUpTo(navController.graph.startDestinationId) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 }
-            }
 
-            BottomNavItem.TextUs -> {
-                navController.navigate("textUsScreen") {
-                    popUpTo(navController.graph.startDestinationId) { saveState = true }
-                    launchSingleTop = true
-                    restoreState = true
+                BottomNavItem.Appointment -> {
+                    navController.navigate("appointmentScreen") {
+                        popUpTo(navController.graph.startDestinationId) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+
+                BottomNavItem.TextUs -> {
+                    navController.navigate("textUsScreen") {
+                        popUpTo(navController.graph.startDestinationId) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 }
             }
         }

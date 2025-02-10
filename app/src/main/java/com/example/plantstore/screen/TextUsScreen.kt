@@ -16,8 +16,10 @@ import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -42,6 +44,11 @@ import androidx.navigation.NavHostController
 import com.example.plantstore.R
 import com.example.plantstore.components.CommonFooter
 import kotlinx.coroutines.launch
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 
 @Composable
 fun TextUsScreen(navController: NavHostController) {
@@ -53,156 +60,199 @@ fun TextUsScreen(navController: NavHostController) {
 
     var selectedTab by remember { mutableStateOf(BottomNavItem.TextUs) }
 
-    Scaffold(
-        topBar = { Header(onProfileClick = { navController.navigate("startScreen") },
-            onLogoClick = { navController.navigate("homeScreen") }) },
-        bottomBar = {
-            Column {
-                CommonFooter()
-                CustomBottomNavigationBar(selectedTab) { selectedTab = it }
-            }
-        },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
-        ) {
-            Text(
-                text = stringResource(R.string.text1),
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(vertical = 8.dp)
-            )
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = stringResource(R.string.text2),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 8.dp)
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = { Text("Your Name") },
-                modifier = Modifier.fillMaxWidth(),
-                leadingIcon = {
-                    Icon(imageVector = Icons.Default.Person, contentDescription = "Name")
-                },
-                singleLine = true
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
-                label = { Text("Your Email") },
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
-                leadingIcon = {
-                    Icon(imageVector = Icons.Default.Email, contentDescription = "Email")
-                },
-                singleLine = true
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = message,
-                onValueChange = { message = it },
-                label = { Text("Your Message") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(150.dp),
-                leadingIcon = {
-                    Icon(imageVector = Icons.Default.MailOutline, contentDescription = "Message")
-                },
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
-                maxLines = 5
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Button(
-                onClick = {
-                    coroutineScope.launch {
-                        if (name.isNotEmpty() && email.isNotEmpty() && message.isNotEmpty()) {
-                            snackbarHostState.showSnackbar("Message sent successfully!")
-                        } else {
-                            snackbarHostState.showSnackbar("Please fill in all the fields.")
-                        }
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = "Plant Store",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                scope.launch {
+                                    drawerState.close()
+                                    navController.navigate("plantGuides")
+                                }
+                            }
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = "Plant Care Guides",
+                            fontSize = 18.sp
+                        )
                     }
-                },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = Color.White
+                }
+            }
+        }
+    ) {
+        Scaffold(
+            topBar = {
+                Header(
+                    onLogoClick = { navController.navigate("homeScreen") },
+                    onMenuClick = { scope.launch { drawerState.open() } }
                 )
+            },
+            bottomBar = {
+                Column {
+                    CommonFooter()
+                    CustomBottomNavigationBar(selectedTab) { selectedTab = it }
+                }
+            },
+        ) { padding ->
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize()
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
             ) {
                 Text(
-                    text = "Submit",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+                    text = stringResource(R.string.text1),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = stringResource(R.string.text2),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Your Name") },
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = {
+                        Icon(imageVector = Icons.Default.Person, contentDescription = "Name")
+                    },
+                    singleLine = true
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    label = { Text("Your Email") },
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
+                    leadingIcon = {
+                        Icon(imageVector = Icons.Default.Email, contentDescription = "Email")
+                    },
+                    singleLine = true
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    value = message,
+                    onValueChange = { message = it },
+                    label = { Text("Your Message") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(150.dp),
+                    leadingIcon = {
+                        Icon(imageVector = Icons.Default.MailOutline, contentDescription = "Message")
+                    },
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
+                    maxLines = 5
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Button(
+                    onClick = {
+                        coroutineScope.launch {
+                            if (name.isNotEmpty() && email.isNotEmpty() && message.isNotEmpty()) {
+                                snackbarHostState.showSnackbar("Message sent successfully!")
+                            } else {
+                                snackbarHostState.showSnackbar("Please fill in all the fields.")
+                            }
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text(
+                        text = "Submit",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = stringResource(R.string.text3),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Center
                 )
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = stringResource(R.string.text3),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Center
-            )
-        }
-        when (selectedTab) {
-            BottomNavItem.Home -> {
-                navController.navigate("homeScreen") {
-                    popUpTo(navController.graph.startDestinationId) { saveState = true }
-                    launchSingleTop = true
-                    restoreState = true
+            when (selectedTab) {
+                BottomNavItem.Home -> {
+                    navController.navigate("homeScreen") {
+                        popUpTo(navController.graph.startDestinationId) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 }
-            }
 
-            BottomNavItem.Wishlist -> {
-                navController.navigate("wishlistScreen") {
-                    popUpTo(navController.graph.startDestinationId) { saveState = true }
-                    launchSingleTop = true
-                    restoreState = true
+                BottomNavItem.Wishlist -> {
+                    navController.navigate("wishlistScreen") {
+                        popUpTo(navController.graph.startDestinationId) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 }
-            }
 
-            BottomNavItem.Plants -> {
-                navController.navigate("plantScreen") {
-                    popUpTo(navController.graph.startDestinationId) { saveState = true }
-                    launchSingleTop = true
-                    restoreState = true
+                BottomNavItem.Plants -> {
+                    navController.navigate("plantScreen") {
+                        popUpTo(navController.graph.startDestinationId) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 }
-            }
 
-            BottomNavItem.Appointment -> {
-                navController.navigate("appointmentScreen") {
-                    popUpTo(navController.graph.startDestinationId) { saveState = true }
-                    launchSingleTop = true
-                    restoreState = true
+                BottomNavItem.Appointment -> {
+                    navController.navigate("appointmentScreen") {
+                        popUpTo(navController.graph.startDestinationId) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 }
-            }
 
-            BottomNavItem.TextUs -> {
+                BottomNavItem.TextUs -> {
 
+                }
             }
         }
     }

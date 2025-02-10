@@ -24,12 +24,17 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MailOutline
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -38,6 +43,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -67,84 +73,149 @@ import com.example.plantstore.model.Outdoor
 import com.example.plantstore.model.Pots
 import com.example.plantstore.model.TopPick
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
+import androidx.compose.material3.rememberDrawerState
 
 @Composable
 fun PlantStoreApp(auth: FirebaseAuth, navController: NavHostController) {
     var searchQuery by remember { mutableStateOf("") }
     val isSearching = searchQuery.isNotEmpty()
     var selectedCategory by remember { mutableStateOf("Top pick") }
-
     var selectedTab by remember { mutableStateOf(BottomNavItem.Home) }
-    Scaffold(
-        topBar = {
-            Header(
-                onProfileClick = {
-                    auth.signOut()
-                    navController.navigate("loginScreen") {
-                        popUpTo("startScreen") { inclusive = true }
-                    }
-                },
-                onLogoClick = { navController.navigate("homeScreen") }
-            )
-        },
-        bottomBar = {
-            Column {
-                CommonFooter()
-                CustomBottomNavigationBar(selectedTab) { selectedTab = it }
-            }
-        },
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .fillMaxSize()
-        ) {
-            MainImageSection(navController)
-            SearchBar(onSearch = { query -> searchQuery = query })
+    
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
-            when (selectedTab) {
-                BottomNavItem.Home -> {
-                    if (isSearching) {
-                        SearchedProducts(searchQuery)
-                    } else {
-                        CategoryTabs(
-                            selectedCategory = selectedCategory,
-                            onCategorySelected = { category -> selectedCategory = category }
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                ) {
+                    Column {
+                        Text(
+                            text = "Plant Store",
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(16.dp)
                         )
-                        ProductList(selectedCategory)
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    scope.launch {
+                                        drawerState.close()
+                                        navController.navigate("plantGuides")
+                                    }
+                                }
+                                .padding(16.dp)
+                        ) {
+                            Text(
+                                text = "Plant Care Guides",
+                                fontSize = 18.sp
+                            )
+                        }
+                    }
+                    
+                    //logout Button
+                    Button(
+                        onClick = {
+                            scope.launch {
+                                drawerState.close()
+                                auth.signOut()
+                                navController.navigate("loginScreen") {
+                                    popUpTo("startScreen") { inclusive = true }
+                                }
+                            }
+                        },
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(
+                            text = "Logout",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
-                BottomNavItem.Wishlist -> navController.navigate("wishlistScreen") {
-                    popUpTo(navController.graph.startDestinationId) { saveState = true }
-                    launchSingleTop = true
-                    restoreState = true
+            }
+        }
+    ) {
+        Scaffold(
+            topBar = {
+                Header(
+                    onLogoClick = { navController.navigate("homeScreen") },
+                    onMenuClick = { scope.launch { drawerState.open() } }
+                )
+            },
+            bottomBar = {
+                Column {
+                    CommonFooter()
+                    CustomBottomNavigationBar(selectedTab) { selectedTab = it }
                 }
-                BottomNavItem.Plants -> navController.navigate("plantScreen") {
-                    popUpTo(navController.graph.startDestinationId) { saveState = true }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-                BottomNavItem.Appointment -> {
-                    navController.navigate("appointmentScreen") {
+            },
+        ) { padding ->
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+                    .verticalScroll(rememberScrollState())
+                    .fillMaxSize()
+            ) {
+                MainImageSection(navController)
+                SearchBar(onSearch = { query -> searchQuery = query })
+
+                when (selectedTab) {
+                    BottomNavItem.Home -> {
+                        if (isSearching) {
+                            SearchedProducts(searchQuery)
+                        } else {
+                            CategoryTabs(
+                                selectedCategory = selectedCategory,
+                                onCategorySelected = { category -> selectedCategory = category }
+                            )
+                            ProductList(selectedCategory, navController)
+                        }
+                    }
+                    BottomNavItem.Wishlist -> navController.navigate("wishlistScreen") {
                         popUpTo(navController.graph.startDestinationId) { saveState = true }
                         launchSingleTop = true
                         restoreState = true
                     }
-                }
-                BottomNavItem.TextUs -> {
-                    navController.navigate("textUsScreen") {
+                    BottomNavItem.Plants -> navController.navigate("plantScreen") {
                         popUpTo(navController.graph.startDestinationId) { saveState = true }
                         launchSingleTop = true
                         restoreState = true
+                    }
+                    BottomNavItem.Appointment -> {
+                        navController.navigate("appointmentScreen") {
+                            popUpTo(navController.graph.startDestinationId) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                    BottomNavItem.TextUs -> {
+                        navController.navigate("textUsScreen") {
+                            popUpTo(navController.graph.startDestinationId) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     }
                 }
             }
         }
     }
 }
-
-
 
 @Composable
 fun CustomBottomNavigationBar(selectedTab: BottomNavItem, onTabSelected: (BottomNavItem) -> Unit) {
@@ -177,11 +248,11 @@ enum class BottomNavItem(val title: String, val icon: ImageVector) {
     TextUs("Text Us", Icons.Default.MailOutline)
 }
 
-
-
 @Composable
-fun Header(onProfileClick: () -> Unit,
-           onLogoClick: () -> Unit) {
+fun Header(
+    onLogoClick: () -> Unit,
+    onMenuClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -189,22 +260,23 @@ fun Header(onProfileClick: () -> Unit,
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(painter = painterResource(R.drawable.logo),
+        IconButton(onClick = onMenuClick) {
+            Icon(
+                imageVector = Icons.Default.Menu,
+                contentDescription = "Menu"
+            )
+        }
+        
+        Image(
+            painter = painterResource(R.drawable.logo),
             contentDescription = "Logo",
             modifier = Modifier
                 .width(300.dp)
-                .clickable {onLogoClick() })
-
-        Image(
-            painter = painterResource(R.drawable.profile),
-            contentDescription = "Profile",
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .clickable {onProfileClick() }
+                .clickable { onLogoClick() }
         )
     }
 }
+
 @Composable
 fun MainImageSection(navController: NavHostController) {
     Box(
@@ -257,6 +329,7 @@ fun MainImageSection(navController: NavHostController) {
         }
     }
 }
+
 @Composable
 fun SearchBar(onSearch: (String) -> Unit) {
     var searchInput by remember { mutableStateOf("") }
@@ -354,9 +427,8 @@ fun CategoryTab(label: String, isSelected: Boolean, onClick: () -> Unit) {
     )
 }
 
-
 @Composable
-fun ProductList(selectedCategory: String) {
+fun ProductList(selectedCategory: String, navController: NavHostController) {
     val products = when (selectedCategory) {
         "Top pick" -> TopPickDataSource().getTopPick()
         "Indoor" -> IndoorDataSource().getIndoor()
@@ -370,19 +442,35 @@ fun ProductList(selectedCategory: String) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         products.forEach { product ->
-            ProductCard(product)
+            ProductCard(product, navController)
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
 
-
 @Composable
-fun ProductCard(product: Any) {
+fun ProductCard(product: Any, navController: NavHostController) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
+            .clickable {
+                val productId = when (product) {
+                    is TopPick -> product.id
+                    is Indoor -> product.id
+                    is Outdoor -> product.id
+                    is Pots -> product.id
+                    else -> -1
+                }
+                val category = when (product) {
+                    is TopPick -> "Top pick"
+                    is Indoor -> "Indoor"
+                    is Outdoor -> "Outdoor"
+                    is Pots -> "Pots"
+                    else -> ""
+                }
+                navController.navigate("productDetail/$category/$productId")
+            }
     ) {
         Row(
             modifier = Modifier

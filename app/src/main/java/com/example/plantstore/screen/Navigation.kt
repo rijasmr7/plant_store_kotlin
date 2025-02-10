@@ -13,6 +13,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,7 +70,45 @@ fun NavigationGraph(navController: NavHostController) {
         composable("textUsScreen") {
             TextUsScreen(navController)
         }
-
-
+        composable(
+            route = "productDetail/{category}/{productId}",
+            arguments = listOf(
+                navArgument("category") { type = NavType.StringType },
+                navArgument("productId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            ProductDetailScreen(
+                navController = navController,
+                productId = backStackEntry.arguments?.getInt("productId") ?: 0,
+                category = backStackEntry.arguments?.getString("category") ?: ""
+            )
+        }
+        composable(
+            route = "productOrder/{category}/{productId}",
+            arguments = listOf(
+                navArgument("category") { type = NavType.StringType },
+                navArgument("productId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            ProductOrderScreen(
+                navController = navController,
+                productId = backStackEntry.arguments?.getInt("productId") ?: 0,
+                category = backStackEntry.arguments?.getString("category") ?: ""
+            )
+        }
+        composable("plantGuides") {
+            PlantGuidesScreen(navController)
+        }
+        composable(
+            route = "plantGuideDetail/{guideId}",
+            arguments = listOf(
+                navArgument("guideId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            PlantGuideDetailScreen(
+                navController = navController,
+                guideId = backStackEntry.arguments?.getInt("guideId") ?: 0
+            )
+        }
     }
 }

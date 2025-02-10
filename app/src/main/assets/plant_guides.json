@@ -1,0 +1,34 @@
+{
+  "guides": [
+    {
+      "id": 1,
+      "title": "Indoor Plant Care Basics",
+      "shortDescription": "Essential tips for indoor plant care",
+      "fullDescription": "Indoor plants need specific care to thrive. Maintain consistent watering schedules, ensure proper lighting, and monitor humidity levels. Most indoor plants prefer temperatures between 60-75°F (15-24°C). Regular pruning and cleaning of leaves help prevent pest problems.",
+      "lightRequirement": "Medium to bright indirect light",
+      "wateringSchedule": "Weekly, when top soil is dry",
+      "difficulty": "Easy",
+      "imageResId": "indoor_care"
+    },
+    {
+      "id": 2,
+      "title": "Succulent Care Guide",
+      "shortDescription": "How to care for succulents",
+      "fullDescription": "Succulents are drought-resistant plants that store water in their leaves. They require well-draining soil and minimal watering. Place them in bright light and avoid overwatering, which is the most common cause of succulent problems. Allow soil to dry completely between waterings.",
+      "lightRequirement": "Direct sunlight",
+      "wateringSchedule": "Every 2-3 weeks",
+      "difficulty": "Easy",
+      "imageResId": "succulent_care"
+    },
+    {
+      "id": 3,
+      "title": "Tropical Plants Care",
+      "shortDescription": "Caring for tropical plants",
+      "fullDescription": "Tropical plants thrive in warm, humid environments. Maintain high humidity through misting or using a humidity tray. These plants typically need bright, indirect light and consistent moisture. Regular fertilization during growing season promotes healthy growth.",
+      "lightRequirement": "Bright indirect light",
+      "wateringSchedule": "Keep soil consistently moist",
+      "difficulty": "Moderate",
+      "imageResId": "tropical_care"
+    }
+  ]
+} 
