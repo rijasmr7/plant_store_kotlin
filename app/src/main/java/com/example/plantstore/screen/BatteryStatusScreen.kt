@@ -3,6 +3,10 @@ package com.example.plantstore.screen
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.BatteryManager
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
@@ -13,55 +17,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
+import androidx.compose.ui.graphics.Color
 
 @Composable
 fun BatteryStatus() {
     val context = LocalContext.current
     var batteryLevel by remember { mutableStateOf(0f) }
     var isCharging by remember { mutableStateOf(false) }
-    var temperature by remember { mutableStateOf(0f) }
-    var hasShownLowBatteryWarning by remember { mutableStateOf(false) }
-    var showLowBatteryDialog by remember { mutableStateOf(false) }
+    var batteryTemp by remember { mutableStateOf(0f) }
 
     LaunchedEffect(Unit) {
         while (true) {
             val batteryInfo = getBatteryInfo(context)
             batteryLevel = batteryInfo.level
             isCharging = batteryInfo.isCharging
-            temperature = batteryInfo.temperature
-
-            if (batteryLevel <= 20f && !hasShownLowBatteryWarning && !isCharging) {
-                Toast.makeText(
-                    context,
-                    "Low battery! Please connect your charger",
-                    Toast.LENGTH_LONG
-                ).show()
-                showLowBatteryDialog = true
-                hasShownLowBatteryWarning = true
-            } else if (batteryLevel > 20f || isCharging) {
-                hasShownLowBatteryWarning = false
-                showLowBatteryDialog = false
-            }
-            
+            batteryTemp = batteryInfo.temperature / 10
             delay(1000)
         }
-    }
-
-    //Alert the user when battery is low
-    if (showLowBatteryDialog) {
-        AlertDialog(
-            onDismissRequest = { showLowBatteryDialog = false },
-            title = { Text("Low Battery Warning") },
-            text = { Text("Your battery level is below 20%. Please connect your charger to continue using the app.") },
-            confirmButton = {
-                Button(onClick = { showLowBatteryDialog = false }) {
-                    Text("OK")
-                }
-            },
-            containerColor = MaterialTheme.colorScheme.surface,
-            titleContentColor = MaterialTheme.colorScheme.error,
-            textContentColor = MaterialTheme.colorScheme.onSurface
-        )
     }
 
     Column(
@@ -79,13 +51,24 @@ fun BatteryStatus() {
             progress = batteryLevel / 100,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(8.dp)
+                .height(8.dp),
+            color = when {
+                batteryLevel > 50f -> MaterialTheme.colorScheme.primary
+                batteryLevel > 20f -> Color(0xFFFFB74D)
+                else -> MaterialTheme.colorScheme.error
+            },
+            trackColor = MaterialTheme.colorScheme.surfaceVariant
         )
         
         Spacer(modifier = Modifier.height(8.dp))
         
         Text(
-            text = "Battery Level: ${(batteryLevel).toInt()}%"
+            text = "Battery Level: ${(batteryLevel).toInt()}%",
+            color = when {
+                batteryLevel > 50f -> MaterialTheme.colorScheme.primary
+                batteryLevel > 20f -> Color(0xFFFFB74D)
+                else -> MaterialTheme.colorScheme.error
+            }
         )
         
         Text(
@@ -93,7 +76,7 @@ fun BatteryStatus() {
         )
         
         Text(
-            text = "Temperature: ${temperature/10}°C"
+            text = "Battery Temperature: ${String.format("%.1f", batteryTemp)}°C"
         )
     }
 }

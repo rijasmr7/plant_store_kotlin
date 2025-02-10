@@ -20,6 +20,8 @@
     <!-- Add this battery permission -->
     <uses-permission android:name="android.permission.BATTERY_STATS" />
 
+    <uses-feature android:name="android.hardware.sensor.light" android:required="false" />
+
     <application
         android:requestLegacyExternalStorage="true"
         android:allowBackup="true"
