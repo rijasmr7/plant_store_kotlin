@@ -44,6 +44,7 @@ import com.example.plantstore.data.PlantDataSource
 import com.example.plantstore.model.Plant
 import kotlinx.coroutines.launch
 import androidx.compose.material3.ExperimentalMaterial3Api
+import com.example.plantstore.components.CommonFooter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,7 +74,10 @@ fun PlantDetailScreen(navController: NavHostController, plantId: Int) {
         },
 
         bottomBar = {
-            CustomBottomNavigationBar(selectedTab) { selectedTab = it }
+            Column {
+                CommonFooter()
+                CustomBottomNavigationBar(selectedTab) { selectedTab = it }
+            }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     )

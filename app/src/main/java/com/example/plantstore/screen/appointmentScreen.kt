@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.plantstore.R
+import com.example.plantstore.components.CommonFooter
 import kotlinx.coroutines.launch
 
 @Composable
@@ -52,7 +53,10 @@ fun AppointmentScreen(navController: NavHostController) {
         topBar = { Header(onProfileClick = { navController.navigate("startScreen") },
             onLogoClick = { navController.navigate("homeScreen") }) },
         bottomBar = {
-            CustomBottomNavigationBar(selectedTab) { selectedTab = it }
+            Column {
+                CommonFooter()
+                CustomBottomNavigationBar(selectedTab) { selectedTab = it }
+            }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { padding ->

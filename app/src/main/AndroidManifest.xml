@@ -17,6 +17,9 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
 
+    <!-- Add this battery permission -->
+    <uses-permission android:name="android.permission.BATTERY_STATS" />
+
     <application
         android:requestLegacyExternalStorage="true"
         android:allowBackup="true"

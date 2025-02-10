@@ -41,6 +41,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.plantstore.components.CommonFooter
 import com.example.plantstore.data.PlantDataSource
 import com.example.plantstore.model.Plant
 
@@ -81,7 +82,10 @@ fun OrderScreen(navController: NavHostController, plantId: Int) {
         },
 
         bottomBar = {
-            CustomBottomNavigationBar(selectedTab) { selectedTab = it }
+            Column {
+                CommonFooter()
+                CustomBottomNavigationBar(selectedTab) { selectedTab = it }
+            }
         },
     ) { padding ->
         if (plantDetail != null) {

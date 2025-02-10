@@ -37,6 +37,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.plantstore.components.CommonFooter
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,7 +69,10 @@ fun PaymentScreen(navController: NavHostController) {
         },
 
         bottomBar = {
-            CustomBottomNavigationBar(selectedTab) { selectedTab = it }
+            Column {
+                CommonFooter()
+                CustomBottomNavigationBar(selectedTab) { selectedTab = it }
+            }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { padding ->

@@ -37,6 +37,7 @@ import com.example.plantstore.data.PlantDataSource
 import com.example.plantstore.model.Plant
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import com.example.plantstore.components.CommonFooter
 
 
 @Composable
@@ -50,7 +51,10 @@ fun PlantsScreen(navController: NavHostController) {
         topBar = { Header(onProfileClick = { navController.navigate("startScreen") },
             onLogoClick = { navController.navigate("homeScreen") }) },
         bottomBar = {
-            CustomBottomNavigationBar(selectedTab) { selectedTab = it }
+            Column {
+                CommonFooter()
+                CustomBottomNavigationBar(selectedTab) { selectedTab = it }
+            }
         },
     ) { padding ->
         LazyVerticalGrid(
@@ -66,6 +70,7 @@ fun PlantsScreen(navController: NavHostController) {
                 }
             }
         }
+
         when (selectedTab) {
             BottomNavItem.Home -> {
                 navController.navigate("homeScreen") {

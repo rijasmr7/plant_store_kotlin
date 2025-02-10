@@ -53,6 +53,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.foundation.background
 import android.content.pm.PackageManager
+import com.example.plantstore.components.CommonFooter
 
 @Composable
 fun WishlistScreen(navController: NavHostController) {
@@ -101,18 +102,24 @@ fun WishlistScreen(navController: NavHostController) {
     // Functions to check and request permissions
     fun checkAndRequestPermissions(forCamera: Boolean) {
         val permissions = if (forCamera) {
-            mutableListOf(Manifest.permission.CAMERA)
+            //Camera permissions
+            mutableListOf(
+                Manifest.permission.CAMERA,
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    Manifest.permission.READ_MEDIA_IMAGES
+                } else {
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                }
+            )
         } else {
-            mutableListOf<String>()
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            permissions.add(Manifest.permission.READ_MEDIA_IMAGES)
-        } else {
-            permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
-            if (forCamera) {
-                permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            }
+            //Storage permissions for uploading images
+            mutableListOf(
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    Manifest.permission.READ_MEDIA_IMAGES
+                } else {
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                }
+            )
         }
 
         val allGranted = permissions.all {
@@ -238,7 +245,10 @@ fun WishlistScreen(navController: NavHostController) {
         topBar = { Header(onProfileClick = { navController.navigate("startScreen") },
             onLogoClick = { navController.navigate("homeScreen") }) },
         bottomBar = {
-            CustomBottomNavigationBar(selectedTab) { selectedTab = it }
+            Column {
+                CommonFooter()
+                CustomBottomNavigationBar(selectedTab) { selectedTab = it }
+            }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { padding ->
