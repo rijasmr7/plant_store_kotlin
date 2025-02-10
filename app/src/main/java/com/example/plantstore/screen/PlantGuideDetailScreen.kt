@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -14,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.plantstore.components.CommonFooter
 import com.example.plantstore.util.JsonReader
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,27 +42,41 @@ fun PlantGuideDetailScreen(navController: NavHostController, guideId: Int) {
             )
         }
     ) { padding ->
-        if (guide != null) {
-            Column(
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+            if (guide != null) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = 80.dp)
+                        .verticalScroll(rememberScrollState())
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = guide.title,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = guide.fullDescription,
+                        fontSize = 16.sp
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    DetailItem("Light Requirement", guide.lightRequirement)
+                    DetailItem("Watering Schedule", guide.wateringSchedule)
+                    DetailItem("Difficulty Level", guide.difficulty)
+                }
+            }
+            Box(
                 modifier = Modifier
-                    .padding(padding)
-                    .verticalScroll(rememberScrollState())
-                    .padding(16.dp)
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
             ) {
-                Text(
-                    text = guide.title,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = guide.fullDescription,
-                    fontSize = 16.sp
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                DetailItem("Light Requirement", guide.lightRequirement)
-                DetailItem("Watering Schedule", guide.wateringSchedule)
-                DetailItem("Difficulty Level", guide.difficulty)
+                CommonFooter()
             }
         }
     }

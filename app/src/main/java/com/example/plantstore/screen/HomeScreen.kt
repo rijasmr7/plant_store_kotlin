@@ -75,6 +75,7 @@ import com.example.plantstore.model.TopPick
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import androidx.compose.material3.rememberDrawerState
+import android.util.Log
 
 @Composable
 fun PlantStoreApp(auth: FirebaseAuth, navController: NavHostController) {
@@ -97,7 +98,7 @@ fun PlantStoreApp(auth: FirebaseAuth, navController: NavHostController) {
                 ) {
                     Column {
                         Text(
-                            text = "Plant Store",
+                            text = "Haala Flower Garden",
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(16.dp)
@@ -109,14 +110,39 @@ fun PlantStoreApp(auth: FirebaseAuth, navController: NavHostController) {
                                 .fillMaxWidth()
                                 .clickable {
                                     scope.launch {
-                                        drawerState.close()
-                                        navController.navigate("plantGuides")
+                                        try {
+                                            drawerState.close()
+                                            navController.navigate("plantGuides") {
+                                                launchSingleTop = true
+                                                restoreState = true
+                                            }
+                                        } catch (e: Exception) {
+                                            Log.e("Navigation", "Error navigating to plant guides", e)
+                                        }
                                     }
                                 }
                                 .padding(16.dp)
                         ) {
                             Text(
                                 text = "Plant Care Guides",
+                                fontSize = 18.sp
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    scope.launch {
+                                        drawerState.close()
+                                        navController.navigate("profileScreen")
+                                    }
+                                }
+                                .padding(16.dp)
+                        ) {
+                            Text(
+                                text = "Profile",
                                 fontSize = 18.sp
                             )
                         }

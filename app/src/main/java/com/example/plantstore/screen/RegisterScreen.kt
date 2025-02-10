@@ -1,5 +1,6 @@
 package com.example.plantstore.screen
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -156,31 +157,26 @@ fun RegisterScreen(
                                 auth.createUserWithEmailAndPassword(email, password)
                                     .addOnCompleteListener { task ->
                                         if (task.isSuccessful) {
-                                            val user = auth.currentUser
+                                            // Store user data in Firestore
+                                            val user = task.result?.user
                                             if (user != null) {
-                                                //Saving user data to firestore
-                                                val userRef =
-                                                    db.collection("users").document(user.uid)
                                                 val userData = hashMapOf(
                                                     "name" to name,
                                                     "email" to email,
                                                     "city" to city
                                                 )
-                                                userRef.set(userData)
+                                                
+                                                FirebaseFirestore.getInstance()
+                                                    .collection("users")
+                                                    .document(user.uid)
+                                                    .set(userData)
                                                     .addOnSuccessListener {
-                                                        Toast.makeText(
-                                                            context,
-                                                            "Registration successful",
-                                                            Toast.LENGTH_SHORT
-                                                        ).show()
+                                                        Log.d("RegisterScreen", "User data stored successfully")
                                                         onRegisterSuccess()
                                                     }
-                                                    .addOnFailureListener {
-                                                        Toast.makeText(
-                                                            context,
-                                                            "Failed to register",
-                                                            Toast.LENGTH_SHORT
-                                                        ).show()
+                                                    .addOnFailureListener { e ->
+                                                        Log.e("RegisterScreen", "Error storing user data", e)
+                                                        // Handle the error
                                                     }
                                             }
                                         } else {

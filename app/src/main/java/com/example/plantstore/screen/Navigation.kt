@@ -110,5 +110,8 @@ fun NavigationGraph(navController: NavHostController) {
                 guideId = backStackEntry.arguments?.getInt("guideId") ?: 0
             )
         }
+        composable("profileScreen") {
+            ProfileScreen(navController)
+        }
     }
 }

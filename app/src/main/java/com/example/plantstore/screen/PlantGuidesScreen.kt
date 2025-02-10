@@ -4,6 +4,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
@@ -17,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.plantstore.util.JsonReader
+import com.example.plantstore.components.CommonFooter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,43 +43,56 @@ fun PlantGuidesScreen(navController: NavHostController) {
             )
         }
     ) { padding ->
-        LazyColumn(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            items(plantGuides) { guide ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                        .clickable {
-                            navController.navigate("plantGuideDetail/${guide.id}")
-                        }
-                ) {
-                    Column(
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 80.dp)
+            ) {
+                items(plantGuides) { guide ->
+                    Card(
                         modifier = Modifier
-                            .padding(16.dp)
                             .fillMaxWidth()
+                            .padding(8.dp)
+                            .clickable {
+                                navController.navigate("plantGuideDetail/${guide.id}")
+                            }
                     ) {
-                        Text(
-                            text = guide.title,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = guide.shortDescription,
-                            fontSize = 16.sp
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "Difficulty: ${guide.difficulty}",
-                            fontSize = 14.sp,
-                            color = MaterialTheme.colorScheme.secondary
-                        )
+                        Column(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth()
+                        ) {
+                            Text(
+                                text = guide.title,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = guide.shortDescription,
+                                fontSize = 16.sp
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "Difficulty: ${guide.difficulty}",
+                                fontSize = 14.sp,
+                                color = MaterialTheme.colorScheme.secondary
+                            )
+                        }
                     }
                 }
+            }
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+            ) {
+                CommonFooter()
             }
         }
     }

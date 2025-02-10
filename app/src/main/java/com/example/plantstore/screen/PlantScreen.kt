@@ -70,7 +70,7 @@ fun PlantsScreen(navController: NavHostController) {
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = "Plant Store",
+                        text = "Haala Flower Garden",
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(16.dp)
@@ -89,6 +89,23 @@ fun PlantsScreen(navController: NavHostController) {
                     ) {
                         Text(
                             text = "Plant Care Guides",
+                            fontSize = 18.sp
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                scope.launch {
+                                    drawerState.close()
+                                    navController.navigate("profileScreen")
+                                }
+                            }
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = "Profile",
                             fontSize = 18.sp
                         )
                     }
