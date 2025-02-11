@@ -49,13 +49,15 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun TextUsScreen(navController: NavHostController) {
+    val context = LocalContext.current
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var message by remember { mutableStateOf("") }
-    val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
     var selectedTab by remember { mutableStateOf(BottomNavItem.TextUs) }
@@ -206,9 +208,28 @@ fun TextUsScreen(navController: NavHostController) {
                     onClick = {
                         coroutineScope.launch {
                             if (name.isNotEmpty() && email.isNotEmpty() && message.isNotEmpty()) {
-                                snackbarHostState.showSnackbar("Message sent successfully!")
+                                try {
+                                    Toast.makeText(
+                                        context,
+                                        "Thank you for your message! We'll get back to you soon.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    name = ""
+                                    email = ""
+                                    message = ""
+                                } catch (e: Exception) {
+                                    Toast.makeText(
+                                        context,
+                                        "Error sending message: ${e.message}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             } else {
-                                snackbarHostState.showSnackbar("Please fill in all the fields.")
+                                Toast.makeText(
+                                    context,
+                                    "Please fill all required fields (Name, Email, Message)",
+                                    Toast.LENGTH_LONG
+                                ).show()
                             }
                         }
                     },
@@ -219,7 +240,7 @@ fun TextUsScreen(navController: NavHostController) {
                     )
                 ) {
                     Text(
-                        text = "Submit",
+                        text = "Send Message",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )

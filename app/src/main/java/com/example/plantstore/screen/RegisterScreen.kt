@@ -157,7 +157,7 @@ fun RegisterScreen(
                                 auth.createUserWithEmailAndPassword(email, password)
                                     .addOnCompleteListener { task ->
                                         if (task.isSuccessful) {
-                                            // Store user data in Firestore
+                                            //store user data in Firestore
                                             val user = task.result?.user
                                             if (user != null) {
                                                 val userData = hashMapOf(
@@ -176,15 +176,27 @@ fun RegisterScreen(
                                                     }
                                                     .addOnFailureListener { e ->
                                                         Log.e("RegisterScreen", "Error storing user data", e)
-                                                        // Handle the error
+                                                        Toast.makeText(
+                                                            context,
+                                                            "Error storing user data",
+                                                            Toast.LENGTH_SHORT
+                                                        ).show()
                                                     }
                                             }
                                         } else {
-                                            Toast.makeText(
-                                                context,
-                                                "Registration failed",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
+                                            if (task.exception?.message?.contains("email address is already in use") == true) {
+                                                Toast.makeText(
+                                                    context,
+                                                    "This email is already registered. Please use a different email or login.",
+                                                    Toast.LENGTH_LONG
+                                                ).show()
+                                            } else {
+                                                Toast.makeText(
+                                                    context,
+                                                    "Registration failed: ${task.exception?.message}",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
                                         }
                                     }
                             } else {

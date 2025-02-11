@@ -102,16 +102,19 @@ fun LoginScreen(
 
                     Button(
                         onClick = {
-                            auth.signInWithEmailAndPassword(email, password)
-                                .addOnCompleteListener { task ->
-                                    if (task.isSuccessful) {
+                            if (email.isNotEmpty() && password.isNotEmpty()) {
+                                auth.signInWithEmailAndPassword(email, password)
+                                    .addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
                                             Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
                                             onLoginSuccess()
-
-                                    } else {
-                                        Toast.makeText(context, "Login failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                                        } else {
+                                            Toast.makeText(context, "Login failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                                        }
                                     }
-                                }
+                            } else {
+                                Toast.makeText(context, "Please fill all the fields", Toast.LENGTH_SHORT).show()
+                            }
                         },
                         modifier = Modifier
                             .fillMaxWidth()

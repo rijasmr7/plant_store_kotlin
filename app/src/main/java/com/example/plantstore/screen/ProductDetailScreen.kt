@@ -63,7 +63,6 @@ fun ProductDetailScreen(navController: NavHostController, productId: Int, catego
         bottomBar = {
             Column {
                 CommonFooter()
-                CustomBottomNavigationBar(selectedTab) { selectedTab = it }
             }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }

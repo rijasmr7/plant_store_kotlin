@@ -63,7 +63,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.clickable
-
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddCircle
+import com.example.plantstore.util.getStorageInfo
+import com.example.plantstore.util.toGigabytes
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Favorite
 @Composable
 fun WishlistScreen(navController: NavHostController) {
     val context = LocalContext.current
@@ -89,6 +96,8 @@ fun WishlistScreen(navController: NavHostController) {
     val executor = remember { ContextCompat.getMainExecutor(context) }
 
     var showCameraPreview by remember { mutableStateOf(false) }
+    var showStorageInfo by remember { mutableStateOf(false) }
+    val storageInfo = remember { getStorageInfo() }
 
     // Add permission states for camera sensor
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -350,59 +359,144 @@ fun WishlistScreen(navController: NavHostController) {
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Column(modifier = Modifier.padding(16.dp)) {
-                    TextField(
+                    OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
-                        label = { Text("Name") },
+                        label = { Text("Your Name") },
                         modifier = Modifier.fillMaxWidth(),
+                        leadingIcon = {
+                            Icon(imageVector = Icons.Default.Person, contentDescription = "Name")
+                        },
                         singleLine = true
                     )
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                    TextField(
+                    OutlinedTextField(
                         value = phone,
                         onValueChange = { phone = it },
-                        label = { Text("Phone") },
+                        label = { Text("Your Phone") },
                         modifier = Modifier.fillMaxWidth(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                        leadingIcon = {
+                            Icon(imageVector = Icons.Default.Phone, contentDescription = "Phone")
+                        },
                         singleLine = true
                     )
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                    TextField(
+                    OutlinedTextField(
                         value = plantName,
                         onValueChange = { plantName = it },
                         label = { Text("Plant Name") },
                         modifier = Modifier.fillMaxWidth(),
+                        leadingIcon = {
+                            Icon(imageVector = Icons.Default.Favorite, contentDescription = "Plant")
+                        },
                         singleLine = true
                     )
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                    TextField(
+                    OutlinedTextField(
                         value = plantSpecs,
                         onValueChange = { plantSpecs = it },
                         label = { Text("Plant Specifications (optional)") },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(150.dp),
+                        leadingIcon = {
+                            Icon(imageVector = Icons.Default.Edit, contentDescription = "Specifications")
+                        },
                         maxLines = 5
                     )
 
-                    Spacer(modifier = Modifier.height(30.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
 
-                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                        Button(onClick = { checkAndRequestPermissions(false) }) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                            .clickable { showStorageInfo = !showStorageInfo }
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            Text(
+                                text = "Storage Information",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                            
+                            if (showStorageInfo) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "Available: %.2f GB".format(storageInfo.availableSpace.toGigabytes()),
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Text(
+                                    text = "Used: %.2f GB".format(storageInfo.usedSpace.toGigabytes()),
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Text(
+                                    text = "Total: %.2f GB".format(storageInfo.totalSpace.toGigabytes()),
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                
+                                // Add warning if storage is low
+                                if (storageInfo.availableSpace.toGigabytes() < 1.0f) {
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Text(
+                                        text = "Warning: Low storage space!",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.error
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        Button(
+                            onClick = { checkAndRequestPermissions(false) },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = Color.White
+                            )
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Upload",
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
                             Text("Upload Image")
                         }
-                        Button(onClick = { checkAndRequestPermissions(true) }) {
+                        
+                        Button(
+                            onClick = { checkAndRequestPermissions(true) },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = Color.White
+                            )
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.AddCircle,
+                                contentDescription = "Camera",
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
                             Text("Take Photo")
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(30.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
 
                     photoUri?.let { uri ->
                         Image(
@@ -414,18 +508,40 @@ fun WishlistScreen(navController: NavHostController) {
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(30.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
 
                     Button(
                         onClick = {
                             coroutineScope.launch {
                                 if (name.isNotEmpty() && phone.isNotEmpty() && plantName.isNotEmpty()) {
-                                    snackbarHostState.showSnackbar("Your wishlist is now under consideration")
+                                    try {
+                                        Toast.makeText(
+                                            context,
+                                            "Wishlist submitted successfully!",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        name = ""
+                                        phone = ""
+                                        plantName = ""
+                                        plantSpecs = ""
+                                        photoUri = null
+                                    } catch (e: Exception) {
+                                        Toast.makeText(
+                                            context,
+                                            "Error: ${e.message}",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
                                 } else {
-                                    snackbarHostState.showSnackbar("Please fill in all the fields.")
+                                    Toast.makeText(
+                                        context,
+                                        "Please fill required fields (Name, Phone, Plant Name)",
+                                        Toast.LENGTH_LONG
+                                    ).show()
                                 }
                             }
                         },
+                        modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
                             contentColor = Color.White
@@ -433,6 +549,7 @@ fun WishlistScreen(navController: NavHostController) {
                     ) {
                         Text(
                             text = "Submit",
+                            fontSize = 18.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }

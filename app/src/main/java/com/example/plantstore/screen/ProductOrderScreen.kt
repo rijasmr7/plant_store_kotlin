@@ -8,6 +8,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -73,7 +76,6 @@ fun ProductOrderScreen(navController: NavHostController, productId: Int, categor
         bottomBar = {
             Column {
                 CommonFooter()
-                CustomBottomNavigationBar(selectedTab) { selectedTab = it }
             }
         }
     ) { padding ->
@@ -166,46 +168,55 @@ fun ProductOrderScreen(navController: NavHostController, productId: Int, categor
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                TextField(
+                OutlinedTextField(
                     value = customerName,
                     onValueChange = { customerName = it },
-                    label = { Text("Name") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
+                    label = { Text("Full Name") },
+                    modifier = Modifier.fillMaxWidth().padding(8.dp),
+                    leadingIcon = {
+                        Icon(imageVector = Icons.Default.Person, contentDescription = "Name")
+                    }
                 )
-                TextField(
+
+                OutlinedTextField(
                     value = customerPhone,
                     onValueChange = { customerPhone = it },
-                    label = { Text("Phone") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
+                    label = { Text("Phone Number") },
+                    modifier = Modifier.fillMaxWidth().padding(8.dp),
+                    leadingIcon = {
+                        Icon(imageVector = Icons.Default.Phone, contentDescription = "Phone")
+                    },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Phone)
                 )
-                TextField(
+
+                OutlinedTextField(
                     value = customerAddress,
                     onValueChange = { customerAddress = it },
-                    label = { Text("Address") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
+                    label = { Text("Delivery Address") },
+                    modifier = Modifier.fillMaxWidth().padding(8.dp),
+                    leadingIcon = {
+                        Icon(imageVector = Icons.Default.LocationOn, contentDescription = "Address")
+                    }
                 )
-                TextField(
+
+                OutlinedTextField(
                     value = customerCity,
                     onValueChange = { customerCity = it },
                     label = { Text("City") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
+                    modifier = Modifier.fillMaxWidth().padding(8.dp),
+                    leadingIcon = {
+                        Icon(imageVector = Icons.Default.LocationOn, contentDescription = "City")
+                    }
                 )
-                TextField(
+
+                OutlinedTextField(
                     value = customerPostalCode,
                     onValueChange = { customerPostalCode = it },
                     label = { Text("Postal Code") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
+                    modifier = Modifier.fillMaxWidth().padding(8.dp),
+                    leadingIcon = {
+                        Icon(imageVector = Icons.Default.LocationOn, contentDescription = "Postal Code")
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -215,11 +226,13 @@ fun ProductOrderScreen(navController: NavHostController, productId: Int, categor
                         if (customerName.isNotEmpty() && customerPhone.isNotEmpty() && 
                             customerAddress.isNotEmpty() && customerCity.isNotEmpty() && 
                             customerPostalCode.isNotEmpty()) {
+                            Toast.makeText(context, "You are 90% there for the successful order", Toast.LENGTH_SHORT).show()
                             navController.navigate("paymentScreen")
                         } else {
                             Toast.makeText(context, "Please fill all the fields", Toast.LENGTH_SHORT).show()
                         }
                     },
+                    modifier = Modifier.fillMaxWidth().padding(8.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = Color.White
