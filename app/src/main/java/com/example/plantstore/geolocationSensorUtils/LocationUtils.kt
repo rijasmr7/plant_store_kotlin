@@ -17,12 +17,11 @@ fun getUserLocation(context: Context, onLocationFetched: (String) -> Unit) {
     ) {
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
             if (location != null) {
-                // Use the updated getCityFromCoordinates function
+                //use the updated getCityFromCoordinates function
                 getCityFromCoordinates(context, location.latitude, location.longitude) { city ->
                     onLocationFetched(city)
                 }
             } else {
-                // Request real-time GPS location update if last known location is null
                 val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000)
                     .setMinUpdateIntervalMillis(2000)
                     .build()
@@ -33,7 +32,7 @@ fun getUserLocation(context: Context, onLocationFetched: (String) -> Unit) {
                             getCityFromCoordinates(context, newLocation.latitude, newLocation.longitude) { city ->
                                 onLocationFetched(city)
                             }
-                            fusedLocationClient.removeLocationUpdates(this) // Stop updates after getting location
+                            fusedLocationClient.removeLocationUpdates(this)
                         }
                     }
                 }
@@ -48,21 +47,19 @@ fun getCityFromCoordinates(context: Context, lat: Double, lon: Double, onCityFet
         val geocoder = Geocoder(context, Locale.getDefault())
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            // Android 12+ uses async Geocoder
             geocoder.getFromLocation(lat, lon, 1, object : Geocoder.GeocodeListener {
                 override fun onGeocode(addresses: MutableList<android.location.Address>) {
                     val city = addresses.firstOrNull()?.locality ?: "Unknown"
-                    onCityFetched(city) // Return the city via callback
+                    onCityFetched(city)
                 }
             })
         } else {
-            // Synchronous method for Android 11 and below
             val addresses = geocoder.getFromLocation(lat, lon, 1)
             val city = addresses?.firstOrNull()?.locality ?: "Unknown"
-            onCityFetched(city) // Return city via callback
+            onCityFetched(city)
         }
     } catch (e: Exception) {
-        onCityFetched("Unknown") // Handle exceptions safely
+        onCityFetched("Unknown")
     }
 }
 

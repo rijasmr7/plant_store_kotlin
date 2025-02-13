@@ -118,6 +118,24 @@ fun AppointmentScreen(navController: NavHostController) {
                             fontSize = 18.sp
                         )
                     }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                scope.launch {
+                                    drawerState.close()
+                                    navController.navigate("reviewScreen")
+                                }
+                            }
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = "Reviews",
+                            fontSize = 18.sp
+                        )
+                    }
                 }
             }
         }

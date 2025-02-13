@@ -3,82 +3,173 @@ package com.example.plantstore.components
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.BatteryManager
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.example.plantstore.screen.BatteryStatus
-import androidx.compose.foundation.clickable
-import androidx.compose.material3.Text
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.platform.LocalContext
-import kotlinx.coroutines.delay
-import com.example.plantstore.screen.BrightnessStatus
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Divider
+import android.os.BatteryManager
 import android.widget.Toast
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import com.example.plantstore.screen.BatteryStatus
+import com.example.plantstore.screen.BrightnessStatus
+import com.example.plantstore.util.NetworkConnectivity
+import kotlinx.coroutines.delay
 
 @Composable
 fun CommonFooter() {
     var isExpanded by remember { mutableStateOf(false) }
     var showLowBatteryDialog by remember { mutableStateOf(false) }
-
-    if (showLowBatteryDialog && !isExpanded) {
-        AlertDialog(
-            onDismissRequest = { showLowBatteryDialog = false },
-            title = { Text("Low Battery Warning") },
-            text = { Text("Your battery level is below 20%. Please connect your charger to continue using the app.") },
-            confirmButton = {
-                Button(onClick = { showLowBatteryDialog = false }) {
-                    Text("OK")
-                }
-            },
-            containerColor = MaterialTheme.colorScheme.surface,
-            titleContentColor = MaterialTheme.colorScheme.error,
-            textContentColor = MaterialTheme.colorScheme.onSurface
-        )
-    }
+    val context = LocalContext.current
+    var isOnline by remember { mutableStateOf(NetworkConnectivity.isNetworkAvailable(context)) }
+    var showTemporaryStatus by remember { mutableStateOf(false) }
+    var previousOnlineState by remember { mutableStateOf(isOnline) }
     
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .border(
-                width = 2.dp,
-                color = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(12.dp)
-            )
-            .clickable { isExpanded = !isExpanded }
-            .padding(16.dp)
-    ) {
-        if (isExpanded) {
-            Column {
-                BatteryStatus()
-                Spacer(modifier = Modifier.height(16.dp))
-                Divider()
-                Spacer(modifier = Modifier.height(16.dp))
-                BrightnessStatus()
-                Spacer(modifier = Modifier.height(16.dp))
-                Divider()
-                Spacer(modifier = Modifier.height(16.dp))
-                TemperatureStatus()
+    LaunchedEffect(Unit) {
+        while(true) {
+            val newOnlineState = NetworkConnectivity.isNetworkAvailable(context)
+            if (newOnlineState != previousOnlineState) {
+                isOnline = newOnlineState
+                previousOnlineState = newOnlineState
+                showTemporaryStatus = true
+                delay(6000)
+                showTemporaryStatus = false
             }
-        } else {
-            CompactSensorStatus(
-                onLowBattery = { showLowBatteryDialog = true }
+            delay(1000)
+        }
+    }
+
+    Column {
+        if (showLowBatteryDialog && !isExpanded) {
+            AlertDialog(
+                onDismissRequest = { showLowBatteryDialog = false },
+                title = { Text("Low Battery Warning") },
+                text = { Text("Your device's battery is running low. Please connect to a charger.") },
+                confirmButton = {
+                    Button(onClick = { showLowBatteryDialog = false }) {
+                        Text("OK")
+                    }
+                },
+                containerColor = MaterialTheme.colorScheme.surface,
+                titleContentColor = MaterialTheme.colorScheme.error,
+                textContentColor = MaterialTheme.colorScheme.onSurface
             )
+        }
+
+        if (showTemporaryStatus) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        if (isOnline) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                        else MaterialTheme.colorScheme.error.copy(alpha = 0.1f)
+                    )
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = if (isOnline) Icons.Default.Check
+                                 else Icons.Default.Close,
+                    contentDescription = "Network Status",
+                    tint = if (isOnline) MaterialTheme.colorScheme.primary
+                          else MaterialTheme.colorScheme.error,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Column {
+                    Text(
+                        text = if (isOnline) "Online" else "Offline",
+                        style = MaterialTheme.typography.titleSmall,
+                        color = if (isOnline) MaterialTheme.colorScheme.primary
+                               else MaterialTheme.colorScheme.error
+                    )
+                }
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .border(
+                    width = 2.dp,
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .clickable { isExpanded = !isExpanded }
+                .padding(16.dp)
+        ) {
+            if (isExpanded) {
+                Column {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                if (isOnline) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                                else MaterialTheme.colorScheme.error.copy(alpha = 0.1f)
+                            )
+                            .padding(8.dp),
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = if (isOnline) Icons.Default.Check
+                                         else Icons.Default.Close,
+                            contentDescription = "Network Status",
+                            tint = if (isOnline) MaterialTheme.colorScheme.primary
+                                  else MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column {
+                            Text(
+                                text = if (isOnline) "Online" else "Offline",
+                                style = MaterialTheme.typography.titleSmall,
+                                color = if (isOnline) MaterialTheme.colorScheme.primary
+                                       else MaterialTheme.colorScheme.error
+                            )
+                            Text(
+                                text = if (isOnline) "Connected to network"
+                                       else "No network connection",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                            )
+                        }
+                    }
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Divider()
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    BatteryStatus()
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Divider()
+                    Spacer(modifier = Modifier.height(16.dp))
+                    BrightnessStatus()
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Divider()
+                    Spacer(modifier = Modifier.height(16.dp))
+                    TemperatureStatus()
+                }
+            } else {
+                CompactSensorStatus(
+                    onLowBattery = { showLowBatteryDialog = true }
+                )
+            }
         }
     }
 }
@@ -256,4 +347,4 @@ private fun getBatteryInfo(context: Context): BatteryInfo {
     val temperature = batteryIntent?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0)?.toFloat() ?: 0f
 
     return BatteryInfo(level, isCharging, temperature)
-} 
+}

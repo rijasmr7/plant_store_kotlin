@@ -44,7 +44,7 @@ fun NavigationGraph(navController: NavHostController) {
         }
         composable("homeScreen") { PlantStoreApp(auth = auth, navController) }
         composable("wishlistScreen") { WishlistScreen(navController) }
-        composable("plantScreen") { PlantsScreen(navController) }
+        composable("plantScreen") { PlantScreen(navController) }
         composable(
             "plantDetailScreen/{plantId}",
             enterTransition = { fadeIn(animationSpec = tween(300)) + slideInVertically(initialOffsetY = { -it }) },
@@ -113,5 +113,12 @@ fun NavigationGraph(navController: NavHostController) {
         composable("profileScreen") {
             ProfileScreen(navController)
         }
+        composable("reviewScreen") {
+            ReviewScreen(navController)
+        }
     }
+}
+
+object Screen {
+    const val REVIEWS = "reviews"
 }

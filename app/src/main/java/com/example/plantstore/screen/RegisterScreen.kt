@@ -122,8 +122,7 @@ fun RegisterScreen(
                     onValueChange = { city = it },
                     label = { Text("City") },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    readOnly = true
+                    shape = RoundedCornerShape(12.dp)
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
